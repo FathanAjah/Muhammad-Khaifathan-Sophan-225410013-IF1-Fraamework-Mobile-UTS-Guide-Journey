@@ -7,44 +7,60 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String appTitle = 'Flutter layout demo';
+    const String appTitle = 'Destinations Guide';
     return MaterialApp(
       title: appTitle,
       home: Scaffold(
         appBar: AppBar(title: const Text(appTitle)),
-        // #docregion add-widget
         body: const SingleChildScrollView(
           child: Column(
             children: [
-              ImageSection(image: 'images/lake.jpg'),
+              // Gambar utama
+              ImageSection(image: 'images/borobudur.jpg'),
+              // Judul dan lokasi
               TitleSection(
-                name: 'Oeschinen Lake Campground',
-                location: 'Kandersteg, Switzerland',
+                name: 'Borobudur Temple',
+                location: 'Magelang, Central Java',
               ),
+              // Tombol interaktif
               ButtonSection(),
+              // Deskripsi tempat
               TextSection(
                 description:
-                'Lake Oeschinen lies at the foot of the Blüemlisalp in the '
-                    'Bernese Alps. Situated 1,578 meters above sea level, it '
-                    'is one of the larger Alpine Lakes. A gondola ride from '
-                    'Kandersteg, followed by a half-hour walk through pastures '
-                    'and pine forest, leads you to the lake, which warms to 20 '
-                    'degrees Celsius in the summer. Activities enjoyed here '
-                    'include rowing, and riding the summer toboggan run.',
+                'Candi Borobudur adalah candi Buddha yang terletak di Magelang, '
+                    'Jawa Tengah, Indonesia. Dibangun pada abad ke-8 dan ke-9 selama masa '
+                    'dinasti Syailendra, candi ini dikenal sebagai salah satu struktur candi '
+                    'Budha terbesar dan terpenting di dunia. Borobudur memiliki desain yang unik dengan '
+                    'arsitektur bertingkat dan dilengkapi dengan lebih dari 2.600 panel relief serta 504 arca '
+                    'Buddha. Candi ini juga dikenal karena stupanya yang ikonik, dan merupakan Situs Warisan Dunia '
+                    'UNESCO sejak tahun 1991. Dikelilingi oleh pemandangan pegunungan yang spektakuler, Borobudur menjadi salah satu '
+                    'destinasi wisata utama di Indonesia.',
               ),
+              // Widget tambahan: Review pengguna
+              // Widget tambahan: Review pengguna yang dapat di like dan di command lagi
+              ReviewSection(),
             ],
           ),
-        ),
-        // #enddocregion add-widget
+          ),
       ),
     );
   }
 }
 
+// Menampilkan gambar asset
+class ImageSection extends StatelessWidget {
+  const ImageSection({super.key, required this.image});
+  final String image;
 
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(image, width: 600, height: 240, fit: BoxFit.cover);
+  }
+}
+
+// Menampilkan nama tempat, lokasi, dan favorit
 class TitleSection extends StatelessWidget {
   const TitleSection({super.key, required this.name, required this.location});
-
   final String name;
   final String location;
 
@@ -55,33 +71,26 @@ class TitleSection extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            /*1*/
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /*2*/
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
                 Text(location, style: TextStyle(color: Colors.grey[500])),
               ],
             ),
           ),
-          /*3*/
-          // #docregion icon
-          Icon(Icons.star, color: Colors.red[500]),
-          // #enddocregion icon
-          const Text('41'),
+          Icon(Icons.star, color: Colors.yellow[700]),
+          const Text('50'),
         ],
       ),
     );
   }
 }
 
+// Menampilkan tombol interaktif seperti CALL, ROUTE, SHARE
 class ButtonSection extends StatelessWidget {
   const ButtonSection({super.key});
 
@@ -92,15 +101,57 @@ class ButtonSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ButtonWithText(color: color, icon: Icons.call, label: 'CALL'),
-          ButtonWithText(color: color, icon: Icons.near_me, label: 'ROUTE'),
-          ButtonWithText(color: color, icon: Icons.share, label: 'SHARE'),
+          _ButtonWithIconAndText(
+            color: color,
+            icon: Icons.call,
+            label: 'CALL',
+            onPressed: () => print('Call button pressed'),
+          ),
+          _ButtonWithIconAndText(
+            color: color,
+            icon: Icons.near_me,
+            label: 'ROUTE',
+            onPressed: () => print('Route button pressed'),
+          ),
+          _ButtonWithIconAndText(
+            color: color,
+            icon: Icons.share,
+            label: 'SHARE',
+            onPressed: () => print('Share button pressed'),
+          ),
         ],
       ),
     );
   }
 }
 
+class _ButtonWithIconAndText extends StatelessWidget {
+  const _ButtonWithIconAndText({
+    required this.color,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final Color color;
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, color: color),
+      label: Text(
+        label,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: color),
+      ),
+    );
+  }
+}
+
+// Widget untuk tombol dengan ikon dan teks
 class ButtonWithText extends StatelessWidget {
   const ButtonWithText({
     super.key,
@@ -124,11 +175,7 @@ class ButtonWithText extends StatelessWidget {
           padding: const EdgeInsets.only(top: 8),
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: color,
-            ),
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: color),
           ),
         ),
       ],
@@ -136,9 +183,9 @@ class ButtonWithText extends StatelessWidget {
   }
 }
 
+// Menampilkan deskripsi tentang tempat
 class TextSection extends StatelessWidget {
   const TextSection({super.key, required this.description});
-
   final String description;
 
   @override
@@ -150,76 +197,73 @@ class TextSection extends StatelessWidget {
   }
 }
 
-// #docregion image-asset
-class ImageSection extends StatelessWidget {
-  const ImageSection({super.key, required this.image});
-
-  final String image;
+// Widget tambahan untuk menampilkan review pengguna
+class ReviewSection extends StatelessWidget {
+  const ReviewSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // #docregion image-asset
-    return Image.asset(image, width: 600, height: 240, fit: BoxFit.cover);
-    // #enddocregion image-asset
-  }
-}
-// #enddocregion image-section
-
-// #docregion favorite-widget
-class FavoriteWidget extends StatefulWidget {
-  const FavoriteWidget({super.key});
-
-  @override
-  State<FavoriteWidget> createState() => _FavoriteWidgetState();
-}
-// #enddocregion favorite-widget
-
-// #docregion favorite-state, favorite-state-fields, favorite-state-build
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  // #enddocregion favorite-state-build
-  bool _isFavorited = true;
-  int _favoriteCount = 41;
-  // #enddocregion favorite-state-fields
-
-  // #docregion toggle-favorite
-  void _toggleFavorite() {
-    setState(() {
-      if (_isFavorited) {
-        _favoriteCount -= 1;
-        _isFavorited = false;
-      } else {
-        _favoriteCount += 1;
-        _isFavorited = true;
-      }
-    });
-  }
-  // #enddocregion toggle-favorite
-
-  // #docregion favorite-state-build
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.all(0),
-          child: IconButton(
-            padding: const EdgeInsets.all(0),
-            alignment: Alignment.center,
-            icon:
-            (_isFavorited
-                ? const Icon(Icons.star)
-                : const Icon(Icons.star_border)),
-            color: Colors.red[500],
-            onPressed: _toggleFavorite,
+        const Divider(thickness: 1, height: 40),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32),
+          child: Text(
+            'User Reviews',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.deepPurple),
           ),
         ),
-        SizedBox(width: 18, child: SizedBox(child: Text('$_favoriteCount'))),
+        const SizedBox(height: 16),
+        _buildReview('Bambang Sudarsono', 'Tempat yang sangat menakjubkan, tempat ini sangat cantik.', 4.5,
+            'https://picsum.photos/200/300/?blur=2'),
+        _buildReview('Siti Nurjanah', 'Pemandangan di tempat ini sangat cantik, cocok untuk menjadi tempat rileks', 5.0,
+            'https://picsum.photos/id/1084/200/300'),
+        _buildReview('Tio Yulistio', 'Tempat ini sangat menakjubkan', 4.0,
+            'https://picsum.photos/seed/picsum/200/300'),
       ],
     );
   }
 
-// #docregion favorite-state-fields
+  Widget _buildReview(String name, String review, double rating, String imageUrl) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            backgroundImage: NetworkImage(imageUrl),
+            radius: 24,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  review,
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: List.generate(5, (index) {
+                    return Icon(
+                      index < rating ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: 16,
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
-
-// #enddocregion favorite-state, favorite-state-fields, favorite-state-build
